@@ -150,11 +150,16 @@ class VocabularyLearnerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         config_entry: config_entries.ConfigEntry,
     ) -> VocabularyLearnerOptionsFlowHandler:
         """Get the options flow for this handler."""
-        return VocabularyLearnerOptionsFlowHandler()
+        return VocabularyLearnerOptionsFlowHandler(config_entry)
 
 
 class VocabularyLearnerOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle options flow for Vocabulary Learner."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        super().__init__()
+        self._config_entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -163,12 +168,12 @@ class VocabularyLearnerOptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             # Update the config entry with new options
             self.hass.config_entries.async_update_entry(
-                self.config_entry, options=user_input
+                self._config_entry, options=user_input
             )
             return self.async_create_entry(title="", data=user_input)
 
         # Get current options or use data as fallback
-        config_entry = self.config_entry
+        config_entry = self._config_entry
         options = config_entry.options or config_entry.data
 
         return self.async_show_form(
