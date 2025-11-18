@@ -1,0 +1,34 @@
+mark_known:
+  name: Mark word as known
+  description: Mark a vocabulary word as known
+  fields:
+    word:
+      name: Word
+      description: The word to mark as known
+      required: true
+      selector:
+        text:
+
+mark_unknown:
+  name: Mark word as unknown
+  description: Mark a vocabulary word as unknown
+  fields:
+    word:
+      name: Word
+      description: The word to mark as unknown
+      required: true
+      selector:
+        text:
+
+next_word:
+  name: Get next word
+  description: Get the next word for review
+
+reset_progress:
+  name: Reset progress
+  description: Reset all learning progress
+
+export_progress:
+  name: Export progress
+  description: Export learning progress data
+
