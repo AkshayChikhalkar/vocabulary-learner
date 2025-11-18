@@ -160,10 +160,17 @@ class VocabularyLearnerOptionsFlowHandler(config_entries.OptionsFlow):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Manage the options."""
+        config_entry = self._config_entry
+        
         if user_input is not None:
+            # Update both options and data
+            new_data = {**config_entry.data, **user_input}
+            self.hass.config_entries.async_update_entry(
+                config_entry, data=new_data, options=user_input
+            )
+            await self.hass.config_entries.async_reload(config_entry.entry_id)
             return self.async_create_entry(title="", data=user_input)
 
-        config_entry = self._config_entry
         options = config_entry.options or config_entry.data
 
         return self.async_show_form(

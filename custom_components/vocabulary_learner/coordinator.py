@@ -65,6 +65,13 @@ class VocabularyLearnerCoordinator(DataUpdateCoordinator):
             # Load vocabulary and progress
             await self.word_manager.load_vocabulary()
 
+            # If no vocabulary loaded, try to load it
+            vocabulary = self.word_manager.get_vocabulary()
+            if not vocabulary:
+                await self._load_vocabulary()
+                await self.word_manager.load_vocabulary()
+                vocabulary = self.word_manager.get_vocabulary()
+
             # Get configuration
             config = self.entry.data
             words_per_day = config.get(CONF_WORDS_PER_DAY, DEFAULT_WORDS_PER_DAY)
@@ -152,8 +159,8 @@ class VocabularyLearnerCoordinator(DataUpdateCoordinator):
 
         vocabulary_entries = []
 
-        # Try to load from file first
-        if vocab_file:
+        # Try to load from user-provided file first
+        if vocab_file and vocab_file.strip():
             try:
                 # Resolve file path relative to config directory
                 config_dir = Path(self.hass.config.config_dir)
@@ -162,11 +169,27 @@ class VocabularyLearnerCoordinator(DataUpdateCoordinator):
                 if file_path.exists():
                     entries = await self.parser.parse_file(file_path)
                     vocabulary_entries.extend(entries)
-                    _LOGGER.info("Loaded %d words from file", len(entries))
+                    _LOGGER.info("Loaded %d words from user file: %s", len(entries), file_path)
                 else:
                     _LOGGER.warning("Vocabulary file not found: %s", file_path)
             except Exception as exc:
                 _LOGGER.error("Error loading vocabulary file: %s", exc)
+
+        # If no vocabulary loaded, try default file
+        if not vocabulary_entries:
+            try:
+                # Get path to integration directory
+                integration_dir = Path(__file__).parent
+                default_file = integration_dir / "vocab_default.csv"
+                
+                if default_file.exists():
+                    entries = await self.parser.parse_file(default_file)
+                    vocabulary_entries.extend(entries)
+                    _LOGGER.info("Loaded %d words from default vocabulary file", len(entries))
+                else:
+                    _LOGGER.warning("Default vocabulary file not found: %s", default_file)
+            except Exception as exc:
+                _LOGGER.error("Error loading default vocabulary file: %s", exc)
 
         # If no vocabulary loaded and API is enabled, fetch from API
         if not vocabulary_entries and enable_api:
