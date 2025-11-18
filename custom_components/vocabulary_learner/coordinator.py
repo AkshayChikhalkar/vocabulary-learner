@@ -72,8 +72,8 @@ class VocabularyLearnerCoordinator(DataUpdateCoordinator):
                 await self.word_manager.load_vocabulary()
                 vocabulary = self.word_manager.get_vocabulary()
 
-            # Get configuration
-            config = self.entry.data
+            # Get configuration (options override data)
+            config = {**self.entry.data, **(self.entry.options or {})}
             words_per_day = config.get(CONF_WORDS_PER_DAY, DEFAULT_WORDS_PER_DAY)
             target_lang = config.get(CONF_TARGET_LANGUAGE, DEFAULT_TARGET_LANGUAGE)
 
@@ -152,7 +152,8 @@ class VocabularyLearnerCoordinator(DataUpdateCoordinator):
 
     async def _load_vocabulary(self) -> None:
         """Load vocabulary from file or API."""
-        config = self.entry.data
+        # Options override data
+        config = {**self.entry.data, **(self.entry.options or {})}
         vocab_file = config.get(CONF_VOCAB_FILE)
         enable_api = config.get(CONF_ENABLE_API, True)
         target_lang = config.get(CONF_TARGET_LANGUAGE, DEFAULT_TARGET_LANGUAGE)
@@ -228,7 +229,7 @@ class VocabularyLearnerCoordinator(DataUpdateCoordinator):
 
     async def get_next_word(self) -> dict[str, Any] | None:
         """Get next word for review."""
-        config = self.entry.data
+        config = {**self.entry.data, **(self.entry.options or {})}
         words_per_day = config.get(CONF_WORDS_PER_DAY, DEFAULT_WORDS_PER_DAY)
         return await self._get_next_word(words_per_day)
 
@@ -252,7 +253,7 @@ class VocabularyLearnerCoordinator(DataUpdateCoordinator):
 
     def _is_quiet_hours(self) -> bool:
         """Check if current time is within quiet hours."""
-        config = self.entry.data
+        config = {**self.entry.data, **(self.entry.options or {})}
         quiet_start = config.get(CONF_QUIET_HOURS_START, "22:00")
         quiet_end = config.get(CONF_QUIET_HOURS_END, "08:00")
 
@@ -272,7 +273,7 @@ class VocabularyLearnerCoordinator(DataUpdateCoordinator):
 
     async def _setup_notifications(self) -> None:
         """Set up notification scheduling."""
-        config = self.entry.data
+        config = {**self.entry.data, **(self.entry.options or {})}
         frequency = config.get(CONF_NOTIFICATION_FREQUENCY, DEFAULT_NOTIFICATION_FREQUENCY)
         notification_entity = config.get(CONF_NOTIFICATION_ENTITY)
 
