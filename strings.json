@@ -1,0 +1,47 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Vocabulary Learner Setup",
+        "description": "Configure your vocabulary learning integration",
+        "data": {
+          "name": "Integration name",
+          "vocab_file": "Vocabulary file path (optional)",
+          "words_per_day": "Words per day",
+          "notification_frequency": "Notification frequency (minutes)",
+          "target_language": "Target language code",
+          "enable_api": "Enable API fallback",
+          "notification_entity": "Notification entity ID",
+          "quiet_hours_start": "Quiet hours start (HH:MM)",
+          "quiet_hours_end": "Quiet hours end (HH:MM)"
+        }
+      }
+    },
+    "error": {
+      "invalid_vocab_file": "Invalid vocabulary file",
+      "unknown": "Unknown error occurred"
+    },
+    "abort": {
+      "already_configured": "Integration is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Vocabulary Learner Options",
+        "description": "Update your vocabulary learning settings",
+        "data": {
+          "vocab_file": "Vocabulary file path",
+          "words_per_day": "Words per day",
+          "notification_frequency": "Notification frequency (minutes)",
+          "target_language": "Target language code",
+          "enable_api": "Enable API fallback",
+          "notification_entity": "Notification entity ID",
+          "quiet_hours_start": "Quiet hours start (HH:MM)",
+          "quiet_hours_end": "Quiet hours end (HH:MM)"
+        }
+      }
+    }
+  }
+}
+
